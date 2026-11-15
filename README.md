@@ -35,7 +35,7 @@ never be handed a 1.27 feature.
 | Go 1.27 | 13 |
 | Go 1.26 | 11 |
 | Go 1.25 | 8 |
-| Go 1.24 | 14 |
+| Go 1.24 | 15 |
 
 The counts differ because the releases do: 1.27 was mostly runtime and tooling,
 while 1.24 shipped a long list of library additions. Padding a thin release with

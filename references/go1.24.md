@@ -232,6 +232,40 @@ func parts(s string) []string {
 }
 ```
 
+## omitzero
+
+> since 1.24 · choice
+
+`omitempty` never omits a zero struct: a `time.Time` field is emitted whether it
+holds a date or the zero value. `omitzero` asks the value whether it is zero,
+which is what the field always meant.
+
+**Before**
+
+```go
+package entry
+
+import "time"
+
+type Token struct {
+	Value     string    `json:"value"`
+	ExpiresAt time.Time `json:"expires_at,omitempty"`
+}
+```
+
+**After**
+
+```go
+package entry
+
+import "time"
+
+type Token struct {
+	Value     string    `json:"value"`
+	ExpiresAt time.Time `json:"expires_at,omitzero"`
+}
+```
+
 ## t.Context
 
 > since 1.24 · choice

@@ -2,11 +2,11 @@
 
 ## v0.1.0 — unreleased
 
-First release: Go 1.24 to 1.27, 46 entries.
+First release: Go 1.24 to 1.27, 47 entries.
 
 - `SKILL.md`: ceiling rule, reference loading, twelve reflexes.
-- `references/`: 46 entries over four releases, 4 of them mechanical.
-  - Go 1.24: 14 entries, 1 mechanical (`stringsseq`).
+- `references/`: 47 entries over four releases, 4 of them mechanical.
+  - Go 1.24: 15 entries, 1 mechanical (`stringsseq`).
   - Go 1.25: 8 entries, 1 mechanical (`waitgroupgo`).
   - Go 1.26: 11 entries, 1 mechanical (`errorsastype`).
   - Go 1.27: 13 entries, 1 mechanical (`embedlit`).
