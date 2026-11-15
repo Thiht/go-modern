@@ -18,11 +18,19 @@ EVAL_AGENT_SKILL='claude -p' \
 ```
 
 Both variables hold a single shell command. The difference between the two is
-whatever makes the skill visible to the agent: a different `CLAUDE_CONFIG_DIR`,
-a Codex profile, an OpenCode config, or a checkout with `SKILL.md` already in
-`~/.claude/skills/`.
+whatever makes the skill visible to the agent. With OpenCode, the setup command
+copies it into the project layout the CLI reads:
 
-Without `EVAL_AGENT_SKILL`, only the baseline runs.
+```bash
+EVAL_AGENT='opencode run --auto "$(cat)"' \
+EVAL_AGENT_SKILL='opencode run --auto "$(cat)"' \
+EVAL_SETUP_SKILL='mkdir -p .opencode/skills/go-modern &&
+  cp -R ~/code/go-modern/SKILL.md ~/code/go-modern/references .opencode/skills/go-modern/' \
+./eval/run.sh
+```
+
+Without `EVAL_AGENT_SKILL`, only the baseline runs. `EVAL_TIMEOUT` caps each
+agent invocation, in seconds; the default is 180.
 
 ## Reading the score
 

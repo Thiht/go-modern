@@ -6,7 +6,11 @@ set -euo pipefail
 root=$(cd "$(dirname "$0")/.." && pwd)
 tasks=$root/eval/tasks
 work=$(mktemp -d)
-trap 'rm -rf "$work"' EXIT
+if [ -n "${EVAL_KEEP:-}" ]; then
+	trap 'echo "kept $work"' EXIT
+else
+	trap 'rm -rf "$work"' EXIT
+fi
 
 : "${EVAL_AGENT:?set EVAL_AGENT to the baseline agent command}"
 skill_cmd=${EVAL_AGENT_SKILL:-}
@@ -21,17 +25,28 @@ score() {
 	printf '%s\t%s' "$build" "$hunks"
 }
 
-# run <task dir> <condition> <command>
+# run <task dir> <condition> <command> [setup]
 run() {
-	local src=$1 cond=$2 cmd=$3
+	local src=$1 cond=$2 cmd=$3 setup=${4:-}
 	local dir="$work/$cond/$(basename "$src")"
 	mkdir -p "$dir"
 	cp "$src"/go.mod "$dir"/
 	(
 		cd "$dir"
+		# The setup command installs the skill for this condition, in whatever
+		# layout the agent expects (for OpenCode: .opencode/skills/<name>).
+		[ -n "$setup" ] && sh -c "$setup" >/dev/null 2>&1
 		# The prompt goes on stdin; the agent writes into the scratch module.
-		sh -c "$cmd" <"$src/task.md" >/dev/null 2>&1 || true
+		run_with_timeout sh -c "$cmd" <"$src/task.md" >/dev/null 2>&1 || true
 	)
+}
+
+run_with_timeout() {
+	if command -v timeout >/dev/null 2>&1; then
+		timeout "${EVAL_TIMEOUT:-180}" "$@"
+	else
+		"$@"
+	fi
 }
 
 printf '%-14s %-10s %-10s\n' task base skill
@@ -40,11 +55,11 @@ fail_base=0 fail_skill=0
 
 for src in "$tasks"/*/; do
 	name=$(basename "$src")
-	run "$src" base "$EVAL_AGENT" || true
+	run "$src" base "$EVAL_AGENT" "" || true
 	base=$(score "$work/base/$name")
 
 	if [ -n "$skill_cmd" ]; then
-		run "$src" skill "$skill_cmd" || true
+		run "$src" skill "$skill_cmd" "${EVAL_SETUP_SKILL:-}" || true
 		skl=$(score "$work/skill/$name")
 	else
 		skl=$'\t-'
