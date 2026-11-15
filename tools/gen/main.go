@@ -298,6 +298,28 @@ func run(src source, version, owner, repo, ref string) ([]byte, error) {
 	return []byte(buf.String()), err
 }
 
+// repoRoot walks up from the working directory to the checkout root, so the
+// default output lands next to references/ whether gen runs from the root or
+// from tools/.
+func repoRoot() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "."
+	}
+	for {
+		if _, err := os.Stat(filepath.Join(dir, "SKILL.md")); err == nil {
+			if _, err := os.Stat(filepath.Join(dir, "references")); err == nil {
+				return dir
+			}
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return "."
+		}
+		dir = parent
+	}
+}
+
 func main() {
 	version := flag.String("version", "", "release to draft, for example 1.28")
 	ref := flag.String("ref", "master", "branch or tag of golang/go to read")
@@ -322,7 +344,7 @@ func main() {
 	}
 
 	if *out == "" {
-		*out = filepath.Join("proposals", "go"+*version+".md")
+		*out = filepath.Join(repoRoot(), "proposals", "go"+*version+".md")
 	}
 	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
 		fmt.Fprintf(os.Stderr, "gen: %v\n", err)

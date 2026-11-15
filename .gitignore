@@ -1,3 +1,2 @@
 .DS_Store
-proposals/*.md
-!proposals/README.md
+proposals/

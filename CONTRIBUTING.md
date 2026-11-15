@@ -82,7 +82,8 @@ go run ./gen -version 1.28
 
 The generator reads `doc/next/` and `api/next/` from the Go repository and writes
 `proposals/go1.28.md`: the pending release notes, the new symbols grouped by
-package, and a stub per package. It never edits `references/`.
+package, and a stub per package. It never edits `references/`. The directory
+is created on demand and gitignored; pass `-out` to write somewhere else.
 
 Then, by hand:
 
