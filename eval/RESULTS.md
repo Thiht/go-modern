@@ -48,3 +48,25 @@ looks modern to the metric.
 What this run establishes: the harness works end to end. What it does not
 establish: that the skill changes anything measurable. Each task needs to assert
 the construct it expects instead of delegating the judgement to `go fix`.
+
+A second blind spot, found in the same run:
+
+```go
+// base
+keys := make([]string, 0, len(m))
+for k := range m {
+	keys = append(keys, k)
+}
+slices.Sort(keys)
+return keys
+```
+
+```go
+// skill
+return slices.Sorted(maps.Keys(m))
+```
+
+Also 0 hunks for both, because `mapsloop` and `slicessort` do not match this
+shape. Meanwhile the baseline already wrote `b.Loop`, `strings.Cut`,
+`url.Clone` and `encoding/json/v2` without the skill: this model knows the
+recent APIs, so four of the six tasks are saturated before the run starts.
