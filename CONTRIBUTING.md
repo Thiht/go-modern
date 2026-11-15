@@ -90,12 +90,6 @@ second lists every new symbol, so nothing is missed.
 When a release leaves the window, delete its file and its entries. Git keeps the
 history; the skill keeps its promise of four releases.
 
-## The eval
-
-`eval/` measures the only thing the validator cannot: whether the skill changes
-what a model writes. Run it before and after a substantial change to `SKILL.md`,
-and report both numbers.
-
 ## Style
 
 - English, imperative, no marketing.

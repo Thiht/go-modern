@@ -52,9 +52,6 @@ The window slides: when Go 1.28 ships, 1.24 leaves and 1.28 joins.
   window, with the `go` directive of the entry's own release.
 - Every "choice" entry is already a `go fix` fixpoint.
 
-`eval/` holds the behavioural side: the same tasks run with and without the
-skill, scored by how much `go fix` still has to say.
-
 ## Scope
 
 Language changes and standard library APIs that alter a decision you make while
