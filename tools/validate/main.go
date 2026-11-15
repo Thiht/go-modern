@@ -161,7 +161,7 @@ func formatted(src string) string {
 
 func same(a, b string) bool { return formatted(a) == formatted(b) }
 
-func check(e entry) error {
+func check(e entry, fixTC string) error {
 	dir, err := os.MkdirTemp("", "go-modern-*")
 	if err != nil {
 		return err
@@ -179,7 +179,7 @@ func check(e entry) error {
 	switch e.Kind {
 	case "choice":
 		// Nothing mechanical should be left to rewrite.
-		if out, err := run(dir, e.toolchain(), "fix", "./..."); err != nil {
+		if out, err := run(dir, fixTC, "fix", "./..."); err != nil {
 			return fmt.Errorf("go fix failed on after:\n%s", out)
 		}
 		got, err := os.ReadFile(filepath.Join(dir, "entry.go"))
@@ -201,7 +201,7 @@ func check(e entry) error {
 		if err := setup(dir, e.Since, e.Before); err != nil {
 			return err
 		}
-		if out, err := run(dir, e.toolchain(), "fix", "./..."); err != nil {
+		if out, err := run(dir, fixTC, "fix", "./..."); err != nil {
 			return fmt.Errorf("go fix failed on before:\n%s", out)
 		}
 		got, err := os.ReadFile(filepath.Join(dir, "entry.go"))
@@ -238,6 +238,7 @@ func main() {
 	refs := flag.String("refs", "references", "directory holding the reference files")
 	only := flag.String("only", "", "only check entries whose name contains this string")
 	jobs := flag.Int("jobs", 4, "entries checked in parallel")
+	fixVersion := flag.String("fix", "", "release whose go fix runs the modernizers (default: the newest reference)")
 	verbose := flag.Bool("v", false, "print every entry")
 	flag.Parse()
 
@@ -271,10 +272,24 @@ func main() {
 		os.Exit(1)
 	}
 
+	// The modernizers only reached go fix in Go 1.26, so an entry from an
+	// older release is proved with the newest toolchain of the window, with the
+	// go directive of its own release: the analyzer has to be there, and it must
+	// still refuse to fire above that release.
+	fix := *fixVersion
+	if fix == "" {
+		for _, e := range entries {
+			if e.Since > fix {
+				fix = e.Since
+			}
+		}
+	}
+	fixTC := "go" + fix + ".0"
+
 	// Warm the toolchain cache sequentially: concurrent downloads race.
 	seen := map[string]bool{}
 	for _, e := range entries {
-		for _, tc := range []string{e.toolchain(), e.previousToolchain()} {
+		for _, tc := range []string{e.toolchain(), e.previousToolchain(), fixTC} {
 			if !seen[tc] {
 				seen[tc] = true
 				run(os.TempDir(), tc, "version")
@@ -295,7 +310,7 @@ func main() {
 			defer wg.Done()
 			sem <- struct{}{}
 			defer func() { <-sem }()
-			results[i] = result{e, check(e)}
+			results[i] = result{e, check(e, fixTC)}
 		}(i, e)
 	}
 	wg.Wait()

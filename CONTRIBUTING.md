@@ -65,6 +65,11 @@ The validator proves, for each entry:
   `go fix` turns it into the "after" block byte for byte;
 - a choice entry's "after" block is already a `go fix` fixpoint.
 
+`go fix` only grew its modernizers in Go 1.26, so the fixer runs the newest
+toolchain of the window while the `go` directive stays at the entry's release.
+That is what makes a 1.24 entry provable: the analyzer exists, and it still
+refuses to fire above the release that owns it.
+
 If `go fix` produces something slightly different from your after block, the
 after block is wrong: copy what the toolchain writes.
 

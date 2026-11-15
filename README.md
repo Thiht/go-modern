@@ -30,12 +30,16 @@ never be handed a 1.27 feature.
 
 ## Coverage
 
-| Release | Entries | Status |
-|---------|---------|--------|
-| Go 1.27 | 13 | available |
-| Go 1.26 | — | in progress |
-| Go 1.25 | — | in progress |
-| Go 1.24 | — | in progress |
+| Release | Entries |
+|---------|---------|
+| Go 1.27 | 13 |
+| Go 1.26 | 11 |
+| Go 1.25 | 8 |
+| Go 1.24 | 14 |
+
+The counts differ because the releases do: 1.27 was mostly runtime and tooling,
+while 1.24 shipped a long list of library additions. Padding a thin release with
+entries nobody would act on would make the whole file less credible.
 
 The window slides: when Go 1.28 ships, 1.24 leaves and 1.28 joins.
 
@@ -43,7 +47,9 @@ The window slides: when Go 1.28 ships, 1.24 leaves and 1.28 joins.
 
 - Every "after" block compiles with the toolchain of the release it claims.
 - Every "mechanical" entry is reproduced exactly by `go fix`, so the reference
-  cannot drift from what the toolchain actually does.
+  cannot drift from what the toolchain actually does. The modernizers only
+  reached `go fix` in Go 1.26, so the check runs the newest toolchain of the
+  window, with the `go` directive of the entry's own release.
 - Every "choice" entry is already a `go fix` fixpoint.
 
 `eval/` holds the behavioural side: the same tasks run with and without the
