@@ -26,6 +26,8 @@ Read every `references/go1.*.md` file whose version is at or below the ceiling.
 A module on 1.26 reads 1.24, 1.25 and 1.26; it ignores 1.27 entirely.
 
 If the ceiling is below 1.24, stop: this skill adds nothing to that module.
+If a release above the ceiling has no reference file yet, say so and fall back to
+the twelve reflexes below, still capped at the ceiling.
 
 ## 3. Prefer the newer form, without asking
 
