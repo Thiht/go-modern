@@ -1,0 +1,36 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+
+      - name: vet and test the tools
+        working-directory: tools
+        run: |
+          go vet ./...
+          go test ./...
+
+      - name: validate the references
+        working-directory: tools
+        run: go run ./validate -refs ../references -v
+
+      - name: check the skill frontmatter
+        run: |
+          test "$(head -1 SKILL.md)" = "---"
+          grep -qx 'name: go-modern' SKILL.md
+          grep -q '^description: .\{80,\}' SKILL.md
