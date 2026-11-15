@@ -73,25 +73,17 @@ refuses to fire above the release that owns it.
 If `go fix` produces something slightly different from your after block, the
 after block is wrong: copy what the toolchain writes.
 
-## Proposing the next release
+## Adding a release
 
-```bash
-cd tools
-go run ./gen -version 1.28
-```
+Read `doc/next/` in the Go repository while the release is in development, and
+`api/go1.<minor>.txt` once it ships. The first says what changed and why, the
+second lists every new symbol, so nothing is missed.
 
-The generator reads `doc/next/` and `api/next/` from the Go repository and writes
-`proposals/go1.28.md`: the pending release notes, the new symbols grouped by
-package, and a stub per package. It never edits `references/`. The directory
-is created on demand and gitignored; pass `-out` to write somewhere else.
-
-Then, by hand:
-
-1. Keep the sections that pass the filter above, drop the rest.
+1. Keep what passes the filter above, drop the rest.
 2. Write the before/after pairs. For a package with a mechanical modernizer,
    let `go fix` write the after block.
 3. Run the validator until it is green.
-4. Move the file into `references/` and delete the proposal.
+4. Add the file to the coverage table of the README and to the CHANGELOG.
 
 ## Sliding the window
 

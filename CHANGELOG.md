@@ -12,5 +12,4 @@ First release: Go 1.24 to 1.27, 47 entries.
   - Go 1.27: 13 entries, 1 mechanical (`embedlit`).
 - `tools/validate`: compile gate, `go fix` reproduction for mechanical entries,
   fixpoint check for choices.
-- `tools/gen`: proposal generator over `doc/next/` and `api/next/`.
 - `eval/`: six tasks, scored by remaining `go fix` output.

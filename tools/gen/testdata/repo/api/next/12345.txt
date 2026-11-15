@@ -1,4 +1,0 @@
-pkg net/http, func NewThing(int) error #12345
-pkg net/http, type Thing struct #12345
-pkg alphabet, const A = 1 #12345
-pkg alphabet, const A = 1 ideal-int #12345
